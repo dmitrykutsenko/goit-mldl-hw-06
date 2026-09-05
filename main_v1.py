@@ -82,9 +82,9 @@ train_dataset, val_dataset = random_split(
 val_dataset.dataset.transform = val_test_transforms
 
 # 2.5. DataLoader-и
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-val_loader   = DataLoader(val_dataset,   batch_size=batch_size, shuffle=False, num_workers=4)
-test_loader  = DataLoader(test_dataset,  batch_size=batch_size, shuffle=False, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+val_loader   = DataLoader(val_dataset,   batch_size=batch_size, shuffle=False, num_workers=0)
+test_loader  = DataLoader(test_dataset,  batch_size=batch_size, shuffle=False, num_workers=0)
 
 
 # ------------------------------------------------------------
@@ -433,3 +433,22 @@ show_misclassified(simple_cnn, test_loader, class_names, max_images=15)
 print("Misclassified examples - ResNet18")
 show_misclassified(resnet, test_loader, class_names, max_images=15)
 
+
+
+# ------------------------------------------------------------
+#if __name__ == "__main__":
+#    simple_cnn, history_cnn = train_model(
+#        simple_cnn, criterion, optimizer_cnn,
+#        train_loader, val_loader,
+#        num_epochs=num_epochs_cnn,
+#        scheduler=None,
+#        model_name="simple_cnn"
+#    )
+#
+#    resnet, history_resnet = train_model(
+#        resnet, criterion, optimizer_resnet,
+#        train_loader, val_loader,
+#        num_epochs=num_epochs_resnet,
+#        scheduler=scheduler_resnet,
+#        model_name="resnet18"
+#    )
