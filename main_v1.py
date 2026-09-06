@@ -16,7 +16,21 @@ import seaborn as sns
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
 
+# === СТАБІЛІЗАЦІЙНИЙ LOADER ДЛЯ WINDOWS ===
+def safe_loader(path):
+    try:
+        # нормалізуємо шлях (Windows інколи дає \\)
+        path = os.path.normpath(path)
 
+        # відкриваємо зображення
+        img = Image.open(path).convert("RGB")
+        return img
+
+    except Exception as e:
+        print(f"⚠️ Skipping corrupted or problematic file: {path}")
+        # повертаємо пусте зображення, щоб батч не зламався
+        return Image.new("RGB", (150, 150))
+    
 # ------------------------------------------------------------
 # 2. Підготовка даних (завантаження, train/val/test, DataLoader)
 # ------------------------------------------------------------
@@ -30,7 +44,7 @@ print("Device:", device)
 data_dir = "./data/raw/intel-image-classification/"
 
 img_size = 150
-batch_size = 64
+batch_size = 16 #64
 
 train_transforms = transforms.Compose([
     transforms.Resize((img_size, img_size)),
@@ -201,6 +215,12 @@ def train_model(model, criterion, optimizer, train_loader, val_loader,
 
         # --- TRAIN ---
         model.train()
+
+        # GPU MONITORING
+        if torch.cuda.is_available():
+            print("GPU:", torch.cuda.get_device_name(0))
+            print("Memory allocated:", torch.cuda.memory_allocated() / 1024**2, "MB")
+
         running_loss = 0.0
         running_corrects = 0
         total = 0
